@@ -47,6 +47,10 @@
               "target": "Package",
               "version": "[8.0.4, )"
             },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.6, )"
+            },
             "Microsoft.EntityframeworkCore": {
               "target": "Package",
               "version": "[8.0.6, )"

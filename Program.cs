@@ -1,152 +1,85 @@
-using Microsoft.EntityFrameworkCore;
-using loja.data;
+using Microsoft.AspNetCore.Mvc;
 using loja.models;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using loja.services;
+using loja.data; // Make sure to include this using directive for the context
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-// Configure the connection to the DB
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine($"Connection String: {connectionString}"); // For debugging
-
 builder.Services.AddDbContext<LojaDbContext>(options =>
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 26))));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); // Add your connection string
+builder.Services.AddScoped<ProductService>();
 
 var app = builder.Build();
 
-// Run migrations at startup
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<LojaDbContext>();
-    dbContext.Database.Migrate();
-}
-
-// Configure the HTTP request pipeline.
+// Configurar as requisições HTTP 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
 
-app.UseHttpsRedirection();
-
-app.MapPost("/createproduto", async (LojaDbContext dbContext, Produto newProduto) =>
+app.MapGet("/produtos", async (ProductService productService) =>
 {
-    dbContext.Produtos.Add(newProduto);
-    await dbContext.SaveChangesAsync();
-    return Results.Created($"/createproduto{newProduto.Id}", newProduto);
-});
-
-app.MapGet("/produtos", async (LojaDbContext dbContext)=>
-{
-    var produtos = await dbContext.Produtos.ToListAsync();
+    var produtos = await productService.GetAllProductsAsync();
     return Results.Ok(produtos);
 });
 
-app.MapGet("/produtos/{id}", async (int id, LojaDbContext dbContext) =>
+app.MapGet("/produtos/{id}", async (int id, ProductService productService) =>
 {
-    var produto = await dbContext.Produtos.FindAsync(id);
+    var produto = await productService.GetProductByIdAsync(id);
     if (produto == null)
     {
-        return Results.NotFound($"Produto with ID {id} not found.");
+        return Results.NotFound($"Product with ID {id} not found.");
     }
-
     return Results.Ok(produto);
 });
 
-app.MapPut("/produtos/{id}", async (int id, LojaDbContext dbContext, Produto updateProduto) =>
+app.MapPost("/produtos", async (Produto produto, ProductService productService) =>
 {
-    var existingproduto = await dbContext.Produtos.FindAsync(id);
-    if (existingproduto == null)
+    await productService.AddProductAsync(produto);
+    return Results.Created($"/produtos/{produto.Id}", produto);
+});
+
+app.MapPut("/produtos/{id}", async (int id, Produto produto, ProductService productService) =>
+{
+    if (id != produto.Id)
     {
-        return Results.NotFound($"Produto with ID {id} not found.");
+        return Results.BadRequest("Product ID mismatch.");
     }
 
-    existingproduto.Nome = updateProduto.Nome;
-    existingproduto.Preco = updateProduto.Preco;
-    existingproduto.Fornecedor = updateProduto.Fornecedor;
-
-    await dbContext.SaveChangesAsync();
-
-    return Results.Ok(existingproduto);
+    await productService.UpdateProductAsync(produto);
+    return Results.Ok();
 });
 
-app.MapPost("/createcliente", async (LojaDbContext dbContext, Cliente newCliente) =>
+app.MapDelete("/produtos/{id}", async (int id, ProductService productService) =>
 {
-    dbContext.Clientes.Add(newCliente);
-    await dbContext.SaveChangesAsync();
-    return Results.Created($"/createcliente{newCliente.Id}", newCliente);
+    await productService.DeleteProductAsync(id);
+    return Results.Ok();
 });
-
-app.MapGet("/clientes", async (LojaDbContext dbContext) =>
-{
-    var clientes = await dbContext.Clientes.ToListAsync();
-    return Results.Ok(clientes);
-});
-
-app.MapGet("/clientes/{id}", async (int id, LojaDbContext dbContext) =>
-{
-    var cliente = await dbContext.Clientes.FindAsync(id);
-    if (cliente == null)
-    {
-        return Results.NotFound($"Cliente with ID {id} not found.");
-    }
-
-    return Results.Ok(cliente);
-});
-
-app.MapPut("/clientes/{id}", async (int id, LojaDbContext dbContext, Cliente updateCliente) =>
-{
-    var existingCliente = await dbContext.Clientes.FindAsync(id);
-    if (existingCliente == null)
-    {
-        return Results.NotFound($"Cliente with ID {id} not found.");
-    }
-
-    existingCliente.Nome = updateCliente.Nome;
-    existingCliente.Cpf = updateCliente.Cpf;
-    existingCliente.Email = updateCliente.Email;
-
-    await dbContext.SaveChangesAsync();
-
-    return Results.Ok(existingCliente);
-});
-
-
-
-
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+app.MapGet("/test-connection", async (LojaDbContext dbContext) =>
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-    
-}
+    try
+    {
+        await dbContext.Database.OpenConnectionAsync();
+        await dbContext.Database.CloseConnectionAsync();
+        return Results.Ok("Connection successful");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Connection failed: {ex.Message}");
+    }
+});
+
+
+
+
+
+
+
 
 
 

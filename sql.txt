@@ -1,0 +1,9 @@
+create database teds;
+use teds;
+DROP USER IF EXISTS 'teds'@'localhost';
+CREATE USER 'teds'@'localhost' IDENTIFIED BY '12345678';
+GRANT ALL PRIVILEGES ON teds.* TO 'teds'@'localhost';
+FLUSH PRIVILEGES;
+
+select * from produtos;
+select * from clientes;
