@@ -75,6 +75,49 @@ app.MapPut("/produtos/{id}", async (int id, LojaDbContext dbContext, Produto upd
     return Results.Ok(existingproduto);
 });
 
+app.MapPost("/createcliente", async (LojaDbContext dbContext, Cliente newCliente) =>
+{
+    dbContext.Clientes.Add(newCliente);
+    await dbContext.SaveChangesAsync();
+    return Results.Created($"/createcliente{newCliente.Id}", newCliente);
+});
+
+app.MapGet("/clientes", async (LojaDbContext dbContext) =>
+{
+    var clientes = await dbContext.Clientes.ToListAsync();
+    return Results.Ok(clientes);
+});
+
+app.MapGet("/clientes/{id}", async (int id, LojaDbContext dbContext) =>
+{
+    var cliente = await dbContext.Clientes.FindAsync(id);
+    if (cliente == null)
+    {
+        return Results.NotFound($"Cliente with ID {id} not found.");
+    }
+
+    return Results.Ok(cliente);
+});
+
+app.MapPut("/clientes/{id}", async (int id, LojaDbContext dbContext, Cliente updateCliente) =>
+{
+    var existingCliente = await dbContext.Clientes.FindAsync(id);
+    if (existingCliente == null)
+    {
+        return Results.NotFound($"Cliente with ID {id} not found.");
+    }
+
+    existingCliente.Nome = updateCliente.Nome;
+    existingCliente.Cpf = updateCliente.Cpf;
+    existingCliente.Email = updateCliente.Email;
+
+    await dbContext.SaveChangesAsync();
+
+    return Results.Ok(existingCliente);
+});
+
+
+
 
 
 var summaries = new[]

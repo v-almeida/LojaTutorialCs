@@ -9,6 +9,8 @@ namespace loja.data
 
         public DbSet<Produto> Produtos { get; set; } // Correct DbSet<> declaration
 
+        public DbSet<Cliente>Clientes{get; set;}
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Add any additional configuration here if needed
