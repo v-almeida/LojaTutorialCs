@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using loja.data;
 using loja.models;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,49 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapPost("/createproduto", async (LojaDbContext dbContext, Produto newProduto) =>
+{
+    dbContext.Produtos.Add(newProduto);
+    await dbContext.SaveChangesAsync();
+    return Results.Created($"/createproduto{newProduto.Id}", newProduto);
+});
+
+app.MapGet("/produtos", async (LojaDbContext dbContext)=>
+{
+    var produtos = await dbContext.Produtos.ToListAsync();
+    return Results.Ok(produtos);
+});
+
+app.MapGet("/produtos/{id}", async (int id, LojaDbContext dbContext) =>
+{
+    var produto = await dbContext.Produtos.FindAsync(id);
+    if (produto == null)
+    {
+        return Results.NotFound($"Produto with ID {id} not found.");
+    }
+
+    return Results.Ok(produto);
+});
+
+app.MapPut("/produtos/{id}", async (int id, LojaDbContext dbContext, Produto updateProduto) =>
+{
+    var existingproduto = await dbContext.Produtos.FindAsync(id);
+    if (existingproduto == null)
+    {
+        return Results.NotFound($"Produto with ID {id} not found.");
+    }
+
+    existingproduto.Nome = updateProduto.Nome;
+    existingproduto.Preco = updateProduto.Preco;
+    existingproduto.Fornecedor = updateProduto.Fornecedor;
+
+    await dbContext.SaveChangesAsync();
+
+    return Results.Ok(existingproduto);
+});
+
+
 
 var summaries = new[]
 {
