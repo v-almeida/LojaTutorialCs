@@ -6,5 +6,7 @@ namespace loja.models{
         public String Nome {get; set;}
 
         public Double Preco {get; set;}
+
+        public String Fornecedor {get; set;}
     }
 }
