@@ -11,6 +11,7 @@ namespace loja.data
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Fornecedor> Fornecedores { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Venda> Vendas { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
