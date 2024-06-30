@@ -7,3 +7,5 @@ FLUSH PRIVILEGES;
 
 select * from produtos;
 select * from clientes;
+select * from fornecedores;
+select * from usuarios;
