@@ -1,21 +1,27 @@
-using Microsoft.AspNetCore.Mvc;
-using loja.models;
-using loja.services;
-using loja.data; // Certifique-se de incluir esta diretiva using para o contexto
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using loja.data;
 using Microsoft.EntityFrameworkCore;
+using loja.services;
+using loja.models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Adicionar serviços ao contêiner.
+// Configuração do banco de dados
 builder.Services.AddDbContext<LojaDbContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 26)))); // Adicione sua string de conexão
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    new MySqlServerVersion(new Version(8, 0, 26))));
+
+// Adicionando serviços
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ClientService>();
-builder.Services.AddScoped<FornecedorService>(); // Adicione o serviço de fornecedor
+builder.Services.AddScoped<FornecedorService>();
+builder.Services.AddScoped<UsuarioService>(); // Adicionando o serviço de usuário
 
 var app = builder.Build();
 
-// Configurar as requisições HTTP 
+// Configurações de ambiente
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -141,6 +147,46 @@ app.MapDelete("/fornecedores/{id}", async (int id, FornecedorService fornecedorS
     return Results.Ok();
 });
 
+// Endpoints para usuários
+app.MapGet("/usuarios", async (UsuarioService usuarioService) =>
+{
+    var usuarios = await usuarioService.GetAllUsuariosAsync();
+    return Results.Ok(usuarios);
+});
+
+app.MapGet("/usuarios/{id}", async (int id, UsuarioService usuarioService) =>
+{
+    var usuario = await usuarioService.GetUsuarioByIdAsync(id);
+    if (usuario == null)
+    {
+        return Results.NotFound($"Usuário with ID {id} not found.");
+    }
+    return Results.Ok(usuario);
+});
+
+app.MapPost("/usuarios", async (Usuario usuario, UsuarioService usuarioService) =>
+{
+    await usuarioService.AddUsuarioAsync(usuario);
+    return Results.Created($"/usuarios/{usuario.Id}", usuario);
+});
+
+app.MapPut("/usuarios/{id}", async (int id, Usuario usuario, UsuarioService usuarioService) =>
+{
+    if (id != usuario.Id)
+    {
+        return Results.BadRequest("Usuário ID mismatch.");
+    }
+
+    await usuarioService.UpdateUsuarioAsync(usuario);
+    return Results.Ok();
+});
+
+app.MapDelete("/usuarios/{id}", async (int id, UsuarioService usuarioService) =>
+{
+    await usuarioService.DeleteUsuarioAsync(id);
+    return Results.Ok();
+});
+
 // Endpoint para testar a conexão com o banco de dados
 app.MapGet("/test-connection", async (LojaDbContext dbContext) =>
 {
@@ -157,6 +203,7 @@ app.MapGet("/test-connection", async (LojaDbContext dbContext) =>
 });
 
 app.Run();
+
 
 
 

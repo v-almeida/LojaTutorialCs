@@ -304,3 +304,4 @@ C:\Users\witha\Documents\againagain\LojaTutorialCs\obj\Debug\net8.0\refint\Loja.
 C:\Users\witha\Documents\againagain\LojaTutorialCs\obj\Debug\net8.0\Loja.pdb
 C:\Users\witha\Documents\againagain\LojaTutorialCs\obj\Debug\net8.0\Loja.genruntimeconfig.cache
 C:\Users\witha\Documents\againagain\LojaTutorialCs\obj\Debug\net8.0\ref\Loja.dll
+C:\Users\witha\Documents\againagain\LojaTutorialCs\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

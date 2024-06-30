@@ -10,6 +10,7 @@ namespace loja.data
         public DbSet<Produto> Produtos { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Fornecedor> Fornecedores { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -23,11 +24,6 @@ namespace loja.data
             }
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // Configurações adicionais do modelo, se necessário
-            base.OnModelCreating(modelBuilder);
-        }
     }
 }
 
