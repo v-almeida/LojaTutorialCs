@@ -5353,11 +5353,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\witha\\Documents\\csharp\\Loja\\Loja.csproj",
+      "projectUniqueName": "C:\\Users\\witha\\Documents\\againagain\\LojaTutorialCs\\Loja.csproj",
       "projectName": "Loja",
-      "projectPath": "C:\\Users\\witha\\Documents\\csharp\\Loja\\Loja.csproj",
+      "projectPath": "C:\\Users\\witha\\Documents\\againagain\\LojaTutorialCs\\Loja.csproj",
       "packagesPath": "C:\\Users\\witha\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\witha\\Documents\\csharp\\Loja\\obj\\",
+      "outputPath": "C:\\Users\\witha\\Documents\\againagain\\LojaTutorialCs\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\witha\\AppData\\Roaming\\NuGet\\NuGet.Config"

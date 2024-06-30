@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "j/MAO1POCPTIHo2sOA4gdoKIiYYJtxu+6FvPfviA0MH0K+FinSzaPM9QWv7YWfwLYEyMv6N+u582i2YUpeSZtQ==",
+  "dgSpecHash": "uWMvH3p1AwV8eYXF0JfxJsSCJYUPNfey5+w9Ia/h0EbO7huRbUSKIk98aMlO0+/YZ+CXbmHAEjoUkAE7i3V5xQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\witha\\Documents\\csharp\\Loja\\Loja.csproj",
+  "projectFilePath": "C:\\Users\\witha\\Documents\\againagain\\LojaTutorialCs\\Loja.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\witha\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\witha\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

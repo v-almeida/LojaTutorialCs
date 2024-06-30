@@ -19,7 +19,11 @@ namespace loja.data{
             optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 26)));
             
             return new LojaDbContext(optionsBuilder.Options);
+
+            
         }
+
+        
 
     }
 }
